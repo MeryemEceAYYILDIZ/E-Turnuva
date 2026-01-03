@@ -54,25 +54,29 @@ pipeline {
         }
 
         // AŞAMA 5: Docker Container Çalıştırma
-        stage('5. Deploy to Docker') {
-            steps {
-                echo 'Sistem Docker üzerinde ayağa kaldırılıyor...'
-                script {
-                    // Önce eski container varsa temizle (Hata vermesin diye try-catch gibi || exit 0 ekledim)
-                    bat 'docker-compose down || exit 0'
+            stage('5. Deploy to Docker') {
+                steps {
+                    echo 'Sistem Docker üzerinde ayağa kaldırılıyor...'
+                    script {
+                        // 1. Önceki kalıntıları ZORLA sil
+                        // Hata vermemesi için '|| exit 0' (Varsa siler, yoksa devam eder)
+                        bat 'docker rm -f eturnuva-postgres || exit 0'
+                        bat 'docker rm -f eturnuva-app || exit 0'
 
-                    // Uygulamayı build et ve Docker Image oluştur
-                    bat 'docker build -t eturnuva-app .'
+                        // 2. Normal temizlik (Ağları vs. temizler)
+                        bat 'docker-compose down || exit 0'
 
-                    // Docker Compose ile veritabanı ve uygulamayı başlat
-                    bat 'docker-compose up -d'
+                        // 3. İmajı oluştur (eclipse-temurin hatası düzeltilmiş haliyle)
+                        bat 'docker build -t eturnuva-app .'
 
-                    echo 'Uygulamanın ayağa kalkması bekleniyor (20 saniye)...'
-                    // Windows için bekleme komutu
-                    bat 'timeout /t 25'
+                        // 4. Sistemi başlat
+                        bat 'docker-compose up -d'
+
+                        echo 'Uygulamanın ayağa kalkması bekleniyor (25 saniye)...'
+                        bat 'timeout /t 25'
+                    }
                 }
             }
-        }
 
         // AŞAMA 6: Sistem Testleri - Selenium
         stage('6. System Tests (Selenium)') {
