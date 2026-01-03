@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -17,33 +17,37 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@ActiveProfiles("test")
+@TestPropertySource(properties = {
+        "spring.datasource.url=jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE",
+        "spring.datasource.driver-class-name=org.h2.Driver",
+        "spring.datasource.username=sa",
+        "spring.datasource.password=",
+        "spring.jpa.database-platform=org.hibernate.dialect.H2Dialect",
+        "spring.jpa.hibernate.ddl-auto=create-drop",
+        "spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.H2Dialect"
+})
 public class TournamentControllerIntegrationTest {
 
     @Autowired
-    private MockMvc mockMvc; // Tarayıcı taklidi yapan araç
+    private MockMvc mockMvc;
 
     @Autowired
-    private ObjectMapper objectMapper; // Java nesnesini JSON'a çeviren araç
+    private ObjectMapper objectMapper;
 
     @Test
     public void testCreateAndGetTournament() throws Exception {
-        // 1. ADIM: Yeni bir turnuva oluştur (POST isteği at)
         Tournament tournament = new Tournament();
         tournament.setName("Entegrasyon Testi Turnuvası");
         tournament.setPrizePool(5000.0);
 
-        // Nesneyi JSON formatına çevir
         String tournamentJson = objectMapper.writeValueAsString(tournament);
 
-        // POST isteğini gönder ve 200 OK aldığını doğrula
         mockMvc.perform(post("/api/tournaments")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(tournamentJson))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("Entegrasyon Testi Turnuvası"));
 
-        // 2. ADIM: Turnuvaları listele (GET isteği at) ve kaydettiğimizin orada olduğunu gör
         mockMvc.perform(get("/api/tournaments"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].name").value("Entegrasyon Testi Turnuvası"));
