@@ -54,29 +54,29 @@ pipeline {
         }
 
         // AŞAMA 5: Docker Container Çalıştırma
-            stage('5. Deploy to Docker') {
-                steps {
-                    echo 'Sistem Docker üzerinde ayağa kaldırılıyor...'
-                    script {
-                        // 1. Önceki kalıntıları ZORLA sil
-                        // Hata vermemesi için '|| exit 0' (Varsa siler, yoksa devam eder)
-                        bat 'docker rm -f eturnuva-postgres || exit 0'
-                        bat 'docker rm -f eturnuva-app || exit 0'
+        stage('5. Deploy to Docker') {
+            steps {
+                echo 'Sistem Docker üzerinde ayağa kaldırılıyor...'
+                script {
+                    // 1. Önceki kalıntıları ZORLA sil
+                    // Hata vermemesi için '|| exit 0' (Varsa siler, yoksa devam eder)
+                    bat 'docker rm -f eturnuva-postgres || exit 0'
+                    bat 'docker rm -f eturnuva-app || exit 0'
 
-                        // 2. Normal temizlik (Ağları vs. temizler)
-                        bat 'docker-compose down || exit 0'
+                    // 2. Normal temizlik (Ağları vs. temizler)
+                    bat 'docker-compose down || exit 0'
 
-                        // 3. İmajı oluştur (eclipse-temurin hatası düzeltilmiş haliyle)
-                        bat 'docker build -t eturnuva-app .'
+                    // 3. İmajı oluştur (eclipse-temurin hatası düzeltilmiş haliyle)
+                    bat 'docker build -t eturnuva-app .'
 
-                        // 4. Sistemi başlat
-                        bat 'docker-compose up -d'
+                    // 4. Sistemi başlat
+                    bat 'docker-compose up -d'
 
-                        echo 'Uygulamanın ayağa kalkması bekleniyor (30 saniye)...'
-                        sleep 30
-                    }
+                    echo 'Uygulamanın ayağa kalkması bekleniyor (30 saniye)...'
+                    sleep 30
                 }
             }
+        }
 
         // AŞAMA 6: Sistem Testleri - Selenium
         stage('6. System Tests (Selenium)') {

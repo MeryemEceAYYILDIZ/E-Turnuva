@@ -1,7 +1,6 @@
 package com.example.E_Turnuva.entity;
 
 import jakarta.persistence.*;
-
 import java.util.List;
 
 @Entity
