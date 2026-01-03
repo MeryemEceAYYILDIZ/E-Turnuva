@@ -34,4 +34,15 @@ public class TournamentController {
             return ResponseEntity.badRequest().build();
         }
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteTournament(@PathVariable Long id) {
+        tournamentService.deleteTournament(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Tournament> updateTournament(@PathVariable Long id, @RequestBody Tournament t) {
+        return ResponseEntity.ok(tournamentService.updateTournament(id, t));
+    }
 }

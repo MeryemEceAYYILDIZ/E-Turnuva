@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><title>Takım Detayı</title><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"></head>
+<body>
+<div class="container mt-5">
+  <a href="/teams" class="btn btn-secondary mb-3">← Geri Dön</a>
+  <h2 th:text="${team.teamName} + ' Kadrosu'">Takım Kadrosu</h2>
+
+  <div class="card mb-4">
+    <div class="card-header">Yeni Oyuncu Ekle</div>
+    <div class="card-body">
+      <form th:action="@{/teams/{id}/addMember(id=${team.id})}" method="post" th:object="${newMember}">
+        <div class="row">
+          <div class="col"><input type="text" class="form-control" placeholder="Oyuncu Adı" th:field="*{playerName}" required></div>
+          <div class="col"><input type="text" class="form-control" placeholder="Rol (Kaptan/Nişancı)" th:field="*{role}"></div>
+          <div class="col"><button type="submit" class="btn btn-success">Ekle</button></div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <table class="table table-striped">
+    <thead><tr><th>Oyuncu</th><th>Rol</th><th>İşlem</th></tr></thead>
+    <tbody>
+    <tr th:each="m : ${team.members}">
+      <td th:text="${m.playerName}">Ali</td>
+      <td th:text="${m.role}">Kaptan</td>
+      <td><a th:href="@{/members/delete/{tid}/{mid}(tid=${team.id}, mid=${m.id})}" class="btn btn-sm btn-danger">At</a></td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+</body></html>

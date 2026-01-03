@@ -8,6 +8,7 @@ public class TeamMember {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private String playerName;
     private String role; // "CAPTAIN", "MEMBER"
 
     @ManyToOne
@@ -21,8 +22,9 @@ public class TeamMember {
     public TeamMember() {
     }
 
-    public TeamMember(Long id, String role, Team team, User user) {
+    public TeamMember(Long id, String playerName, String role, Team team, User user) {
         this.id = id;
+        this.playerName = playerName;
         this.role = role;
         this.team = team;
         this.user = user;
@@ -34,6 +36,14 @@ public class TeamMember {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getPlayerName() {
+        return playerName;
+    }
+
+    public void setPlayerName(String playerName) {
+        this.playerName = playerName;
     }
 
     public String getRole() {

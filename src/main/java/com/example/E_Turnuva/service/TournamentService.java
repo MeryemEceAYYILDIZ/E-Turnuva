@@ -13,9 +13,22 @@ public class TournamentService {
     @Autowired
     private TournamentRepository tournamentRepository;
 
+    // ID ile turnuva bul
+    public Optional<Tournament> getTournamentById(Long id) {
+        return tournamentRepository.findById(id);
+    }
+
     // Tüm turnuvaları getir
     public List<Tournament> getAllTournaments() {
         return tournamentRepository.findAll();
+    }
+
+    // Turnuvaya Takım Ekleme (İlişkisel İşlem)
+    // Bu metot, projenin "karmaşık iş" beklentisini karşılar.
+    public void addTeamToTournament(Long tournamentId, Long teamId) {
+        // İleride buraya Application (Başvuru) mantığı ekleyeceğiz.
+        // Şimdilik sadece metodun varlığı test senaryosu için yeterli.
+        System.out.println(teamId + " nolu takım " + tournamentId + " nolu turnuvaya eklendi.");
     }
 
     // Yeni turnuva kaydet
@@ -28,21 +41,17 @@ public class TournamentService {
         return tournamentRepository.save(tournament);
     }
 
+    // Güncelleme
+    public Tournament updateTournament(Long id, Tournament updatedDetails) {
+        Tournament t = tournamentRepository.findById(id).orElseThrow();
+        t.setName(updatedDetails.getName());
+        t.setPrizePool(updatedDetails.getPrizePool());
+        t.setStatus(updatedDetails.getStatus());
+        return tournamentRepository.save(t);
+    }
+
     // Turnuva Sil
     public void deleteTournament(Long id) {
         tournamentRepository.deleteById(id);
-    }
-
-    // Turnuvaya Takım Ekleme (İlişkisel İşlem)
-    // Bu metot, projenin "karmaşık iş" beklentisini karşılar.
-    public void addTeamToTournament(Long tournamentId, Long teamId) {
-        // İleride buraya Application (Başvuru) mantığı ekleyeceğiz.
-        // Şimdilik sadece metodun varlığı test senaryosu için yeterli.
-        System.out.println(teamId + " nolu takım " + tournamentId + " nolu turnuvaya eklendi.");
-    }
-
-    // ID ile turnuva bul
-    public Optional<Tournament> getTournamentById(Long id) {
-        return tournamentRepository.findById(id);
     }
 }

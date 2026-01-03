@@ -17,6 +17,7 @@ public class MatchService {
     @Autowired private TournamentRepository tournamentRepository;
     @Autowired private TeamRepository teamRepository;
 
+    // Yeni maç oluştur
     public Match createMatch(Long tournamentId, Long team1Id, Long team2Id, String date) {
         Tournament tournament = tournamentRepository.findById(tournamentId).orElseThrow();
         Team team1 = teamRepository.findById(team1Id).orElseThrow(); // teamRepository kullan
@@ -31,5 +32,6 @@ public class MatchService {
         return matchRepository.save(match);
     }
 
+    // Tüm maçları getir
     public List<Match> getAllMatches() { return matchRepository.findAll(); }
 }

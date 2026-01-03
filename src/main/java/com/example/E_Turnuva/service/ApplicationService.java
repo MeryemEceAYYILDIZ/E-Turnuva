@@ -2,8 +2,8 @@ package com.example.E_Turnuva.service;
 
 import com.example.E_Turnuva.entity.Tournament;
 import com.example.E_Turnuva.entity.Team;
-import com.example.E_Turnuva.entity.TournamentApplication; // Entity ismini kontrol et
-import com.example.E_Turnuva.repository.ApplicationRepository; // Repository'yi oluşturman gerekecek (aşağıda)
+import com.example.E_Turnuva.entity.TournamentApplication;
+import com.example.E_Turnuva.repository.ApplicationRepository;
 import com.example.E_Turnuva.repository.TournamentRepository;
 import com.example.E_Turnuva.repository.TeamRepository;
 import org.springframework.beans.factory.annotation.Autowired;
