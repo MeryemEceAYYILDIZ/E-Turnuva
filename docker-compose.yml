@@ -1,6 +1,7 @@
 version: '3.8'
 
 services:
+  # 1. VERİTABANI SERVİSİ
   db:
     image: postgres:15
     container_name: eturnuva-postgres
@@ -9,9 +10,29 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: eturnuva_db
     ports:
-      - "5433:5432"
+      - "5433:5432" # Bilgisayarındaki 5433 -> Docker'daki 5432
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # 2. UYGULAMA SERVİSİ
+  app:
+    container_name: eturnuva-app
+    build: .  # Dockerfile'ı kullanarak image oluştur
+    ports:
+      - "8080:8080" # Dışarıdan 8080 ile erişilecek
+    depends_on:
+      db:
+        condition: service_healthy # DB açılmadan uygulama açılmasın
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/eturnuva_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: password
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
 
 volumes:
   postgres_data:
