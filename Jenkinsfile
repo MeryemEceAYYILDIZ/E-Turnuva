@@ -72,8 +72,8 @@ pipeline {
                         // 4. Sistemi başlat
                         bat 'docker-compose up -d'
 
-                        echo 'Uygulamanın ayağa kalkması bekleniyor (25 saniye)...'
-                        bat 'timeout /t 25'
+                        echo 'Uygulamanın ayağa kalkması bekleniyor (30 saniye)...'
+                        sleep 30
                     }
                 }
             }
