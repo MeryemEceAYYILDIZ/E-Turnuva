@@ -80,9 +80,15 @@ public class MatchServiceTest {
         Tournament t = new Tournament(); t.setId(1L);
         when(tournamentRepository.findById(1L)).thenReturn(Optional.of(t));
 
+        Team team = new Team();
+        team.setId(1L);
+        team.setTeamName("Test Takımı");
+
         // Mocklama sırasına gerek kalmadan exception fırlatılmalı çünkü ID kontrolü repository'den sonra
         // Ama repository findById çağrıldığı için onu mocklamalıyız.
-        when(teamRepository.findById(1L)).thenReturn(Optional.of(new Team()));
+        when(teamRepository.findById(1L)).thenReturn(Optional.of(team));
+
+        when(applicationRepository.existsByTournamentAndTeam(any(), any())).thenReturn(true);
 
         Exception exception = assertThrows(RuntimeException.class, () -> {
             matchService.createMatch(1L, 1L, 1L, "2030-01-01");
