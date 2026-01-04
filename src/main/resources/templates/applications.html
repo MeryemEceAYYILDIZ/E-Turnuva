@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><title>Başvurular</title><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"></head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+  <div class="container"><a class="navbar-brand" href="/">🎮 E-Turnuva</a>
+    <div class="collapse navbar-collapse"><ul class="navbar-nav me-auto">
+      <li class="nav-item"><a class="nav-link" href="/">Dashboard</a></li>
+      <li class="nav-item"><a class="nav-link" href="/games">Oyunlar</a></li>
+      <li class="nav-item"><a class="nav-link" href="/teams">Takımlar</a></li>
+      <li class="nav-item"><a class="nav-link" href="/tournaments">Turnuvalar</a></li>
+      <li class="nav-item"><a class="nav-link active" href="/applications">Başvurular</a></li>
+      <li class="nav-item"><a class="nav-link" href="/matches">Maçlar</a></li>
+    </ul></div></div>
+</nav>
+
+<div class="container">
+  <h3>Turnuva Başvurusu</h3>
+
+  <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+  <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+
+  <div class="card mb-4">
+    <div class="card-body">
+      <form action="/applications/apply" method="post" class="row g-3">
+        <div class="col-md-5">
+          <label>Hangi Takım?</label>
+          <select name="teamId" class="form-select" required>
+            <option value="">Seçiniz...</option>
+            <option th:each="t : ${teams}" th:value="${t.id}" th:text="${t.teamName}"></option>
+          </select>
+        </div>
+        <div class="col-md-5">
+          <label>Hangi Turnuva?</label>
+          <select name="tournamentId" class="form-select" required>
+            <option value="">Seçiniz...</option>
+            <option th:each="t : ${tournaments}" th:value="${t.id}" th:text="${t.name} + ' (' + ${t.status} + ')'"></option>
+          </select>
+        </div>
+        <div class="col-md-2 d-flex align-items-end">
+          <button type="submit" class="btn btn-primary w-100">Başvur</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <h4>Mevcut Başvurular</h4>
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>Turnuva</th>
+        <th>Takım</th>
+        <th>Durum</th>
+        <th>İşlem</th>
+      </tr>
+    </thead>
+    <tbody>
+    <tr th:each="app : ${applications}">
+      <td th:text="${app.tournament.name}"></td>
+      <td th:text="${app.team.teamName}"></td>
+      <td>
+                <span class="badge"
+                      th:classappend="${app.status == 'ACCEPTED' ? 'bg-success' : 'bg-warning text-dark'}"
+                      th:text="${app.status}">
+                </span>
+      </td>
+      <td>
+        <a th:if="${app.status == 'PENDING'}"
+           th:href="@{/applications/delete/{id}(id=${app.id})}"
+           class="btn btn-sm btn-outline-danger"
+           onclick="return confirm('Başvuruyu iptal etmek istiyor musunuz?')">
+          İptal Et
+        </a>
+        <span th:if="${app.status == 'ACCEPTED'}" class="text-muted small">Eşleşti (Silinemez)</span>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+</body></html>

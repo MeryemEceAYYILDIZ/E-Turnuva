@@ -14,8 +14,8 @@ public class TournamentService {
     private TournamentRepository tournamentRepository;
 
     // ID ile turnuva bul
-    public Optional<Tournament> getTournamentById(Long id) {
-        return tournamentRepository.findById(id);
+    public Tournament getTournamentById(Long id) {
+        return tournamentRepository.findById(id).orElseThrow();
     }
 
     // Tüm turnuvaları getir
@@ -41,13 +41,16 @@ public class TournamentService {
         return tournamentRepository.save(tournament);
     }
 
-    // Güncelleme
-    public Tournament updateTournament(Long id, Tournament updatedDetails) {
-        Tournament t = tournamentRepository.findById(id).orElseThrow();
-        t.setName(updatedDetails.getName());
-        t.setPrizePool(updatedDetails.getPrizePool());
-        t.setStatus(updatedDetails.getStatus());
-        return tournamentRepository.save(t);
+    // Turnuva Güncelle
+    public Tournament updateTournament(Long id, Tournament updatedTournament) {
+        Tournament existing = tournamentRepository.findById(id).orElseThrow();
+
+        existing.setName(updatedTournament.getName());
+        existing.setPrizePool(updatedTournament.getPrizePool());
+        existing.setStatus(updatedTournament.getStatus());
+        existing.setGame(updatedTournament.getGame());
+
+        return tournamentRepository.save(existing); // Kaydedilen nesneyi geri dön
     }
 
     // Turnuva Sil

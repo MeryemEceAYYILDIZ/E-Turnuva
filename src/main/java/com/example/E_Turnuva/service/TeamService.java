@@ -19,4 +19,8 @@ public class TeamService {
     public Team createTeam(Team team) {
         return teamRepository.save(team);
     }
+
+    public void deleteTeam(Long id) {
+        teamRepository.deleteById(id);
+    }
 }
