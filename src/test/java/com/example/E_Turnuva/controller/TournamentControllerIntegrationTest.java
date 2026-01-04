@@ -36,6 +36,7 @@ public class TournamentControllerIntegrationTest {
 
     @Test
     public void testCreateAndGetTournament() throws Exception {
+        // Senaryo 3: Turnuva Oluşturma ve Getirme
         Tournament tournament = new Tournament();
         tournament.setName("Entegrasyon Testi Turnuvası");
         tournament.setPrizePool(5000.0);

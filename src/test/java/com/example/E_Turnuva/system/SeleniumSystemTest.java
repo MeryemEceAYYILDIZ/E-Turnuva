@@ -39,6 +39,7 @@ public class SeleniumSystemTest {
 
     @Test
     public void testNavigationMenu() {
+        // Senaryo 10: Navigasyon Menüsü Testi
         // 1. Ana sayfaya git
         driver.get("http://localhost:" + port);
         String pageSource = driver.getPageSource();
