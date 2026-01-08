@@ -16,20 +16,18 @@ import static org.mockito.ArgumentMatchers.any;
 public class TournamentServiceTest {
 
     @Mock
-    private TournamentRepository tournamentRepository; // Sahte Repository
+    private TournamentRepository tournamentRepository;
 
     @InjectMocks
-    private TournamentService tournamentService; // Test edeceğimiz Servis
+    private TournamentService tournamentService;
 
     @Test
     public void testCreateTournament_Success() {
         // SENARYO 1: Her şey yolunda, turnuva kaydedilmeli.
-
         Tournament tournament = new Tournament();
         tournament.setName("LoL Kış Turnuvası");
         tournament.setPrizePool(1000.0);
 
-        // Repository.save çağrıldığında, aynı turnuvayı geri dönsün (taklit ediyoruz)
         Mockito.when(tournamentRepository.save(any(Tournament.class))).thenReturn(tournament);
 
         Tournament created = tournamentService.createTournament(tournament);
@@ -46,7 +44,6 @@ public class TournamentServiceTest {
         tournament.setName("Hatalı Turnuva");
         tournament.setPrizePool(-500.0); // Hatalı veri
 
-        // Bu metodu çağırdığımda "IllegalArgumentException" hatası fırlatılmalı
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
             tournamentService.createTournament(tournament);
         });

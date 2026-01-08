@@ -99,7 +99,7 @@ public class WebController {
         return "redirect:/tournaments";
     }
 
-    // Turnuva Düzenleme Sayfası (YENİ)
+    // Turnuva Düzenleme Sayfası
     @GetMapping("/tournaments/edit/{id}")
     public String editTournamentPage(@PathVariable Long id, Model model) {
         Tournament t = tournamentService.getTournamentById(id);

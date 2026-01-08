@@ -72,7 +72,7 @@ public class MatchService {
         return matchRepository.findAll();
     }
 
-    // YENİ: Maç İptal/Silme
+    // Maç İptal/Silme
     public void deleteMatch(Long id) {
         // 1. Silinecek maçı bul
         Match match = matchRepository.findById(id).orElseThrow(() -> new RuntimeException("Maç bulunamadı"));

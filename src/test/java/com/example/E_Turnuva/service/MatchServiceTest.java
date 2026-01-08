@@ -27,9 +27,46 @@ public class MatchServiceTest {
     @Mock private TournamentRepository tournamentRepository;
     @Mock private TeamRepository teamRepository;
     @Mock private ApplicationRepository applicationRepository;
-    @Mock private ApplicationService applicationService; // MatchService içinde bu servisi kullanıyoruz
+    @Mock private ApplicationService applicationService;
 
     @InjectMocks private MatchService matchService;
+
+    // --- SENARYO 6: Maç Fikstürü Oluşturma (Happy Path) ---
+    @Test
+    public void testCreateMatch_HappyPath() {
+        // 1. Hazırlık (Mock Veriler)
+        Tournament t = new Tournament(); t.setId(1L); t.setStatus("OPEN");
+        Team t1 = new Team(); t1.setId(1L); t1.setTeamName("T1");
+        Team t2 = new Team(); t2.setId(2L); t2.setTeamName("G2");
+
+        // Repository çağrıldığında bu sahte verileri dön
+        when(tournamentRepository.findById(1L)).thenReturn(Optional.of(t));
+        when(teamRepository.findById(1L)).thenReturn(Optional.of(t1));
+        when(teamRepository.findById(2L)).thenReturn(Optional.of(t2));
+
+        // Kuralları geçmesi için gerekli koşulları sağla
+        // Takımlar kayıtlı mı? EVET
+        when(applicationRepository.existsByTournamentAndTeam(t, t1)).thenReturn(true);
+        when(applicationRepository.existsByTournamentAndTeam(t, t2)).thenReturn(true);
+        // Böyle bir maç zaten var mı? HAYIR (Yoksa kaydedemeyiz)
+        when(matchRepository.existsByTournamentAndTeam1AndTeam2AndMatchDate(any(), any(), any(), any())).thenReturn(false);
+
+        // Kayıt sonrası dönülecek maç nesnesi
+        Match savedMatch = new Match();
+        savedMatch.setId(100L);
+        when(matchRepository.save(any(Match.class))).thenReturn(savedMatch);
+
+        // 2. İşlem (Service metodunu çağır)
+        matchService.createMatch(1L, 1L, 2L, "2026-05-20");
+
+        // 3. Doğrulama (Verify)
+        // Maç kaydedildi mi?
+        verify(matchRepository, times(1)).save(any(Match.class));
+
+        // Takımların durumu "ACCEPTED" yapıldı mı?
+        verify(applicationService, times(1)).updateStatus(t, t1, "ACCEPTED");
+        verify(applicationService, times(1)).updateStatus(t, t2, "ACCEPTED");
+    }
 
     // --- SENARYO 7: Kayıtlı Olmayan Takım Maçı ---
     @Test
@@ -84,8 +121,6 @@ public class MatchServiceTest {
         team.setId(1L);
         team.setTeamName("Test Takımı");
 
-        // Mocklama sırasına gerek kalmadan exception fırlatılmalı çünkü ID kontrolü repository'den sonra
-        // Ama repository findById çağrıldığı için onu mocklamalıyız.
         when(teamRepository.findById(1L)).thenReturn(Optional.of(team));
 
         when(applicationRepository.existsByTournamentAndTeam(any(), any())).thenReturn(true);
@@ -95,42 +130,5 @@ public class MatchServiceTest {
         });
 
         assertEquals("Hata: Bir takım kendisiyle maç yapamaz!", exception.getMessage());
-    }
-
-    // --- SENARYO 6: Maç Fikstürü Oluşturma (Happy Path) ---
-    @Test
-    public void testCreateMatch_HappyPath() {
-        // 1. Hazırlık (Mock Veriler)
-        Tournament t = new Tournament(); t.setId(1L); t.setStatus("OPEN");
-        Team t1 = new Team(); t1.setId(1L); t1.setTeamName("T1");
-        Team t2 = new Team(); t2.setId(2L); t2.setTeamName("G2");
-
-        // Repository çağrıldığında bu sahte verileri dön
-        when(tournamentRepository.findById(1L)).thenReturn(Optional.of(t));
-        when(teamRepository.findById(1L)).thenReturn(Optional.of(t1));
-        when(teamRepository.findById(2L)).thenReturn(Optional.of(t2));
-
-        // Kuralları geçmesi için gerekli koşulları sağla
-        // Takımlar kayıtlı mı? EVET
-        when(applicationRepository.existsByTournamentAndTeam(t, t1)).thenReturn(true);
-        when(applicationRepository.existsByTournamentAndTeam(t, t2)).thenReturn(true);
-        // Böyle bir maç zaten var mı? HAYIR (Yoksa kaydedemeyiz)
-        when(matchRepository.existsByTournamentAndTeam1AndTeam2AndMatchDate(any(), any(), any(), any())).thenReturn(false);
-
-        // Kayıt sonrası dönülecek maç nesnesi
-        Match savedMatch = new Match();
-        savedMatch.setId(100L);
-        when(matchRepository.save(any(Match.class))).thenReturn(savedMatch);
-
-        // 2. İşlem (Service metodunu çağır)
-        matchService.createMatch(1L, 1L, 2L, "2026-05-20");
-
-        // 3. Doğrulama (Verify)
-        // Maç kaydedildi mi?
-        verify(matchRepository, times(1)).save(any(Match.class));
-
-        // KRİTİK KONTROL: Takımların durumu "ACCEPTED" yapıldı mı?
-        verify(applicationService, times(1)).updateStatus(t, t1, "ACCEPTED");
-        verify(applicationService, times(1)).updateStatus(t, t2, "ACCEPTED");
     }
 }

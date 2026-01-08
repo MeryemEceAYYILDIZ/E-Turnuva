@@ -48,7 +48,6 @@ public class ApplicationService {
     // Başvuru Durumunu Güncelleme (Maç servisi kullanacak)
     public void updateStatus(Tournament tournament, Team team, String status) {
         // Bu turnuva ve takım için olan başvuruyu bul
-        // (Bunun için Repository'ye yeni bir metot eklememiz gerekebilir, şimdilik stream ile bulalım)
         TournamentApplication app = applicationRepository.findAll().stream()
                 .filter(a -> a.getTournament().getId().equals(tournament.getId()) && a.getTeam().getId().equals(team.getId()))
                 .findFirst()

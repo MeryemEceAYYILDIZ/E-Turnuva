@@ -15,15 +15,11 @@ public class TournamentController {
     @Autowired
     private TournamentService tournamentService;
 
-    // GET - Tüm turnuvaları listele
-    // Adres: http://localhost:8080/api/tournaments
     @GetMapping
     public List<Tournament> getAllTournaments() {
         return tournamentService.getAllTournaments();
     }
 
-    // POST - Yeni turnuva ekle
-    // Adres: http://localhost:8080/api/tournaments
     @PostMapping
     public ResponseEntity<Tournament> createTournament(@RequestBody Tournament tournament) {
         try {

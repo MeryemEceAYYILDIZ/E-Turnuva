@@ -24,16 +24,12 @@ public class TournamentService {
     }
 
     // Turnuvaya Takım Ekleme (İlişkisel İşlem)
-    // Bu metot, projenin "karmaşık iş" beklentisini karşılar.
     public void addTeamToTournament(Long tournamentId, Long teamId) {
-        // İleride buraya Application (Başvuru) mantığı ekleyeceğiz.
-        // Şimdilik sadece metodun varlığı test senaryosu için yeterli.
         System.out.println(teamId + " nolu takım " + tournamentId + " nolu turnuvaya eklendi.");
     }
 
     // Yeni turnuva kaydet
     public Tournament createTournament(Tournament tournament) {
-        // BASİT BİR İŞ KURALI (Business Logic):
         // Eğer ödül havuzu negatif girilirse kaydetme, hata fırlat.
         if (tournament.getPrizePool() != null && tournament.getPrizePool() < 0) {
             throw new IllegalArgumentException("Ödül havuzu negatif olamaz!");
